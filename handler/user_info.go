@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/api"
 	"gopkg.in/macaron.v1"
 )
@@ -16,7 +17,7 @@ func UserInfo(ctx *macaron.Context) {
 	rsp := &api.UserInfoRsp{}
 	rsp.Id = uid
 	if err := rsp.QueryAll(); err != nil {
-		ctx.JSON(500, api.DB_ERROR)
+		ctx.JSON(500, tkits.DB_ERROR)
 		return
 	}
 

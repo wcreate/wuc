@@ -1,8 +1,9 @@
-package handler
+package wuc
 
 import (
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/captcha"
+	"github.com/wcreate/wuc/handler"
 	"gopkg.in/macaron.v1"
 )
 
@@ -18,14 +19,14 @@ func InitHandles(m *macaron.Macaron) {
 		Expiration:       600,             // 验证码过期时间，默认为 600 秒
 		CachePrefix:      "captcha_",      // 用于存储验证码正确值的 Cache 键名，默认为 "captcha_"
 	}))
-	m.Get("/captcha/new", GetCaptcha)
+	m.Get("/captcha/new", handler.GetCaptcha)
 
-	m.Delete("/api/user/:uid", DeleteUser)
+	m.Delete("/api/user/:uid", handler.DeleteUser)
 
-	m.Get("/api/user/info/:uid", UserInfo)
-	m.Put("/api/user/info/:uid", ModifyUser)
-	m.Post("/api/user/info/:uid", ModifyUser)
-	m.Put("/api/user/pwd/:uid", ModifyPassword)
+	m.Get("/api/user/info/:uid", handler.UserInfo)
+	m.Put("/api/user/info/:uid", handler.ModifyUser)
+	m.Post("/api/user/info/:uid", handler.ModifyUser)
+	m.Put("/api/user/pwd/:uid", handler.ModifyPassword)
 
-	m.Post("/api/user/login", LoginUser)
+	m.Post("/api/user/login", handler.LoginUser)
 }

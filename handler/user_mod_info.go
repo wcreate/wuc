@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/astaxie/beego/orm"
+	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
 	"gopkg.in/macaron.v1"
@@ -29,17 +30,17 @@ func ModifyUser(ctx *macaron.Context) {
 	if err := oldui.Read("User"); err == orm.ErrNoRows {
 		// not exist then insert it
 		if err := mui.Insert(); err != nil {
-			ctx.JSON(500, api.DB_ERROR)
+			ctx.JSON(500, tkits.DB_ERROR)
 			return
 		}
 	} else if err != nil {
-		ctx.JSON(500, api.DB_ERROR)
+		ctx.JSON(500, tkits.DB_ERROR)
 		return
 	}
 
 	// 3.0
 	if err := mui.UpdateInfo(); err != nil {
-		ctx.JSON(500, api.DB_ERROR)
+		ctx.JSON(500, tkits.DB_ERROR)
 		return
 	}
 

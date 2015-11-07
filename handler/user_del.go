@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/wcreate/wuc/api"
+	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/models"
 	"gopkg.in/macaron.v1"
 )
@@ -16,7 +16,7 @@ func DeleteUser(ctx *macaron.Context) {
 
 	u := &models.User{Id: uid}
 	if err := u.DeleteAll(); err != nil {
-		ctx.JSON(500, api.DB_ERROR)
+		ctx.JSON(500, tkits.DB_ERROR)
 		return
 	}
 }

@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
-	"github.com/wcreate/wuc/security"
 	"gopkg.in/macaron.v1"
 )
 
@@ -25,23 +25,23 @@ func ModifyPassword(ctx *macaron.Context) {
 		ctx.JSON(404, api.INVALID_USER)
 		return
 	} else if err != nil {
-		ctx.JSON(500, api.DB_ERROR)
+		ctx.JSON(500, tkits.DB_ERROR)
 		return
 	}
 
-	if !security.CmpPasswd(mpwd.OldPasswd, u.Salt, u.Password) {
+	if !tkits.CmpPasswd(mpwd.OldPasswd, u.Salt, u.Password) {
 		ctx.JSON(404, api.INVALID_USER)
 		return
 	}
 
 	// 3.0
-	pwd, salt := security.GenPasswd(mpwd.NewPasswd, 8)
+	pwd, salt := tkits.GenPasswd(mpwd.NewPasswd, 8)
 	u.Salt = salt
 	u.Password = pwd
 	u.Updated = time.Now()
 
 	if row, _ := u.Update("Salt", "Password", "Updated"); row != 1 {
-		ctx.JSON(500, api.DB_ERROR)
+		ctx.JSON(500, tkits.DB_ERROR)
 		return
 	}
 

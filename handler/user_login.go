@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/go-macaron/captcha"
+	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
-	"github.com/wcreate/wuc/security"
 	"gopkg.in/macaron.v1"
 )
 
@@ -32,7 +32,7 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	// check user password
-	if !security.CmpPasswd(ulr.Passwd, u.Salt, u.Password) {
+	if !tkits.CmpPasswd(ulr.Passwd, u.Salt, u.Password) {
 		ctx.JSON(404, api.INVALID_USER)
 		return
 	}
@@ -43,13 +43,13 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 	u.LastLoginIp = cip
 	u.LoginCount += 1
 	if _, err := u.Update("LastLoginTime", "LastLoginIp", "LoginCount"); err != nil {
-		ctx.JSON(400, api.DB_ERROR)
+		ctx.JSON(400, tkits.DB_ERROR)
 		return
 	}
 
 	// generate a token
-	if token, err := security.GetDefaultSimpleToken().GenToken(cip, fmt.Sprintf("%v", u.Id)); err != nil {
-		ctx.JSON(404, api.SYS_ERROR)
+	if token, err := tkits.GetSimpleToken().GenToken(cip, fmt.Sprintf("%v", u.Id)); err != nil {
+		ctx.JSON(404, tkits.SYS_ERROR)
 		return
 	} else {
 		rsp := &api.UserLoginRsp{
