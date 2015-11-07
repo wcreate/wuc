@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/wcreate/tkits"
 
@@ -19,7 +20,7 @@ func getClientIP(ctx *macaron.Context) string {
 func getUidWithAuth(ctx *macaron.Context) (int64, bool) {
 	uid := ctx.ParamsInt64("uid")
 	if uid == 0 {
-		ctx.JSON(400, tkits.INVALID_URL)
+		ctx.JSON(http.StatusBadRequest, tkits.INVALID_URL)
 		return -1, false
 	}
 
@@ -47,12 +48,12 @@ func getUidAndBodyWithAuth(ctx *macaron.Context, v interface{}) (int64, bool) {
 func getBody(ctx *macaron.Context, v interface{}) bool {
 	body, err := ctx.Req.Body().Bytes()
 	if err != nil {
-		ctx.JSON(400, tkits.INVALID_BODY)
+		ctx.JSON(http.StatusBadRequest, tkits.INVALID_BODY)
 		return false
 	}
 
 	if err := json.Unmarshal(body, v); err == nil {
-		ctx.JSON(400, tkits.INVALID_BODY)
+		ctx.JSON(http.StatusBadRequest, tkits.INVALID_BODY)
 		return false
 	}
 

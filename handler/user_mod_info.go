@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/astaxie/beego/orm"
 	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/api"
@@ -18,7 +20,7 @@ func ModifyUser(ctx *macaron.Context) {
 	}
 
 	if uid != mui.Uid {
-		ctx.JSON(400, api.INVALID_USER)
+		ctx.JSON(http.StatusBadRequest, api.INVALID_USER)
 		return
 	}
 	mui.User = &models.User{Id: uid}
@@ -30,19 +32,19 @@ func ModifyUser(ctx *macaron.Context) {
 	if err := oldui.Read("User"); err == orm.ErrNoRows {
 		// not exist then insert it
 		if err := mui.Insert(); err != nil {
-			ctx.JSON(500, tkits.DB_ERROR)
+			ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 			return
 		}
 	} else if err != nil {
-		ctx.JSON(500, tkits.DB_ERROR)
+		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 		return
 	}
 
 	// 3.0
 	if err := mui.UpdateInfo(); err != nil {
-		ctx.JSON(500, tkits.DB_ERROR)
+		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 		return
 	}
 
-	ctx.Status(200)
+	ctx.Status(http.StatusOK)
 }

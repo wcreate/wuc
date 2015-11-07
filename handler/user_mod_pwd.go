@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/astaxie/beego/orm"
@@ -22,15 +23,15 @@ func ModifyPassword(ctx *macaron.Context) {
 	// 2.0
 	u := &models.User{Id: uid}
 	if err := u.ReadOneOnly("Salt", "Password"); err == orm.ErrNoRows {
-		ctx.JSON(404, api.INVALID_USER)
+		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
 		return
 	} else if err != nil {
-		ctx.JSON(500, tkits.DB_ERROR)
+		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 		return
 	}
 
 	if !tkits.CmpPasswd(mpwd.OldPasswd, u.Salt, u.Password) {
-		ctx.JSON(404, api.INVALID_USER)
+		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
 		return
 	}
 
@@ -41,9 +42,9 @@ func ModifyPassword(ctx *macaron.Context) {
 	u.Updated = time.Now()
 
 	if row, _ := u.Update("Salt", "Password", "Updated"); row != 1 {
-		ctx.JSON(500, tkits.DB_ERROR)
+		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 		return
 	}
 
-	ctx.Status(200)
+	ctx.Status(http.StatusOK)
 }

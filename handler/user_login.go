@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/go-macaron/captcha"
@@ -20,20 +21,20 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	if !cpt.Verify(ulr.CaptchaId, ulr.CaptchaName) {
-		ctx.JSON(400, api.INVALID_CAPTCHA)
+		ctx.JSON(http.StatusBadRequest, api.INVALID_CAPTCHA)
 		return
 	}
 
 	// check user whether existed
-	u := models.User{}
+	u := &models.User{}
 	if err := u.Find(ulr.Email, ulr.Username, ulr.Mobile); err != nil {
-		ctx.JSON(400, api.INVALID_USER)
+		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
 		return
 	}
 
 	// check user password
 	if !tkits.CmpPasswd(ulr.Passwd, u.Salt, u.Password) {
-		ctx.JSON(404, api.INVALID_USER)
+		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
 		return
 	}
 
@@ -43,20 +44,19 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 	u.LastLoginIp = cip
 	u.LoginCount += 1
 	if _, err := u.Update("LastLoginTime", "LastLoginIp", "LoginCount"); err != nil {
-		ctx.JSON(400, tkits.DB_ERROR)
+		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 		return
 	}
 
 	// generate a token
 	if token, err := tkits.GetSimpleToken().GenToken(cip, fmt.Sprintf("%v", u.Id)); err != nil {
-		ctx.JSON(404, tkits.SYS_ERROR)
+		ctx.JSON(http.StatusInternalServerError, tkits.SYS_ERROR)
 		return
 	} else {
-		rsp := &api.UserLoginRsp{
-			u.Id,
-			u.Username,
-			token,
-		}
-		ctx.JSON(200, rsp)
+		rsp := &api.UserLoginRsp{}
+		rsp.Uid = u.Id
+		rsp.Username = u.Username
+		rsp.Token = token
+		ctx.JSON(http.StatusOK, rsp)
 	}
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/go-macaron/captcha"
 	"github.com/wcreate/wuc/api"
@@ -21,5 +22,5 @@ func GetCaptcha(ctx *macaron.Context, cpt *captcha.Captcha) {
 		fmt.Sprintf("%s%s%s.png", cpt.SubURL, cpt.URLPrefix, v),
 	}
 
-	ctx.JSON(200, rsp)
+	ctx.JSON(http.StatusOK, rsp)
 }

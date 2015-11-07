@@ -4,6 +4,8 @@ import (
 	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/models"
 	"gopkg.in/macaron.v1"
+
+	"net/http"
 )
 
 // DELETE /api/user/:uid/
@@ -16,7 +18,9 @@ func DeleteUser(ctx *macaron.Context) {
 
 	u := &models.User{Id: uid}
 	if err := u.DeleteAll(); err != nil {
-		ctx.JSON(500, tkits.DB_ERROR)
+		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 		return
 	}
+
+	ctx.Status(http.StatusOK)
 }

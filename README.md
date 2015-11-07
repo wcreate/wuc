@@ -16,3 +16,4 @@
   - User Login
   - User Logout
   - Check a user existed by username/email/mobile
+  - Confirm a user after register

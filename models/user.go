@@ -36,18 +36,18 @@ type UserInfo struct {
 	Id   int64 `json:"-" orm:"pk;auto"`
 	User *User `json:"-" orm:"null;rel(one)"` // OneToOne relation
 
-	Realname string `json:"real_name"`                 // 真实姓名
-	Content  string `json:"signsure" orm:"size(1024)"` // 个人签名
-	Avatar   string `json:"avatar"`                    // 头像地址 48*48
+	Realname string `json:"real_name" valid:"MaxSize(100)"`                  // 真实姓名
+	Content  string `json:"signsure" orm:"size(1024)" valid:"MaxSize(1024)"` // 个人签名
+	Avatar   string `json:"avatar"`                                          // 头像地址 48*48
 
-	Gender int       `json:"gender"`                              // 0：Unknown, 1: Male， 2：Female
+	Gender int       `json:"gender" valid:"Range(0,2)"`           // 0：Unknown, 1: Male， 2：Female
 	Birth  time.Time `json:"birth" orm:"auto_now_add;type(date)"` // 生日
 
-	Province string `json:"province"` // 省份
-	City     string `json:"city"`     // 城市
-	Company  string `json:"company"`  // 公司
-	Address  string `json:"address"`  // 地址
-	Website  string `json:"website"`  // 个人官网
+	Province string `json:"province" valid:"MaxSize(32)"` // 省份
+	City     string `json:"city" valid:"MaxSize(100)"`    // 城市
+	Company  string `json:"company" valid:"MaxSize(255)"` // 公司
+	Address  string `json:"address" valid:"MaxSize(255)"` // 地址
+	Website  string `json:"website" valid:"MaxSize(255)"` // 个人官网
 
 }
 
