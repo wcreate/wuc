@@ -79,3 +79,9 @@ type UserLoginRsp struct {
 type UserInfoRsp struct {
 	models.User
 }
+
+type CaptchaRsp struct {
+	FieldIdName string `json:"id_name"`
+	Id          string `json:"id_value"`
+	ImgUrl      string `json:"img_url"`
+}

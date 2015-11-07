@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	"gopkg.in/macaron.v1"
 )
 
@@ -58,7 +59,7 @@ func configFile() string {
 			configPath = filepath.Join(workPath, "../conf", "app.ini")
 		}
 	}
-	println("config path ", configPath)
+	log.Debug("config path=", configPath)
 	return configPath
 }
 

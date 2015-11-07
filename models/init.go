@@ -2,6 +2,9 @@ package models
 
 import (
 	"fmt"
+	"time"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
@@ -19,6 +22,7 @@ func init() {
 	}
 
 	dbtype := web.Key("dbtype").String()
+	log.Debugf("DB type is %s", dbtype)
 	dbcfg, err := cfg.GetSection(dbtype)
 	if err != nil {
 		panic(err)
@@ -49,6 +53,9 @@ func init() {
 		orm.RegisterDataBase(dbname, "sqlite3", url)
 	}
 
+	// 设置为 UTC 时间
+	orm.DefaultTimeLoc = time.UTC
+	orm.Debug = true
 	orm.RegisterModel(new(User), new(UserInfo))
 
 	force := false                      // drop table 后再建表
