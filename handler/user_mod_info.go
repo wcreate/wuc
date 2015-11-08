@@ -26,12 +26,15 @@ func ModifyUser(ctx *macaron.Context) {
 	mui.User = &models.User{Id: uid}
 
 	// 1.1 TODO Check the params
+	if !validReq(ctx, &mui) {
+		return
+	}
 
 	// 2.0
 	oldui := &models.UserInfo{User: &models.User{Id: uid}}
 	if err := oldui.Read("User"); err == orm.ErrNoRows {
 		// not exist then insert it
-		if err := mui.Insert(); err != nil {
+		if _, err := mui.Insert(); err != nil {
 			ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 			return
 		}

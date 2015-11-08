@@ -18,7 +18,7 @@
     ```
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=UTF-8
-    
+
     {
       "id_name": "captcha_id",
       "id_value": "RYZTF7NRKl35F4x",
@@ -27,6 +27,31 @@
     ```
 
   - Add a user
+
+      **Example request**:
+      ```
+      POST http://127.0.0.1:8080/api/user/signup HTTP/1.1
+      Content-Type: application/json; charset=UTF-8
+
+      {
+        "email": "1@test.com",
+        "username": "test1",
+        "password": "123456",
+        "captcha_id": "xD586zFSptv3Qq2",
+        "captcha_value": "689826"
+      }
+      ```
+      **Example response**:
+      ```
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=UTF-8
+
+      {
+        "uid": 1,
+        "username": "",
+        "token": "2JzpfhH61KjbzXtaUniEI4wI5FS8WGfWxfNA9LIqybcyHDC-w58xln2BjehGhN-r3uRvXthfsqJNPJeUnqsfIP1uKUUNa8e-t4rAVUF7I-JiipLTLGi7LBF1PeIs4c6g"
+      }
+      ```
 
   - Delete a user
 

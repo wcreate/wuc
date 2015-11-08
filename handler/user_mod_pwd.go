@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego/validation"
 	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
@@ -32,6 +33,13 @@ func ModifyPassword(ctx *macaron.Context) {
 
 	if !tkits.CmpPasswd(mpwd.OldPasswd, u.Salt, u.Password) {
 		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
+		return
+	}
+
+	valid := validation.Validation{}
+	valid.Match(mpwd.NewPasswd, api.ValidPasswd,
+		"NewPasswd").Message(api.PasswdPrompt)
+	if !validMember(ctx, &valid) {
 		return
 	}
 

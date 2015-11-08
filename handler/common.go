@@ -2,8 +2,11 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
+	log "github.com/Sirupsen/logrus"
+	"github.com/astaxie/beego/validation"
 	"github.com/wcreate/tkits"
 
 	"gopkg.in/macaron.v1"
@@ -48,14 +51,49 @@ func getUidAndBodyWithAuth(ctx *macaron.Context, v interface{}) (int64, bool) {
 func getBody(ctx *macaron.Context, v interface{}) bool {
 	body, err := ctx.Req.Body().Bytes()
 	if err != nil {
+		log.Error(err.Error())
 		ctx.JSON(http.StatusBadRequest, tkits.INVALID_BODY)
 		return false
 	}
 
-	if err := json.Unmarshal(body, v); err == nil {
+	log.Debugf("retrive body = %s", string(body))
+	if err := json.Unmarshal(body, v); err != nil {
+		log.Error(err.Error())
 		ctx.JSON(http.StatusBadRequest, tkits.INVALID_BODY)
 		return false
 	}
 
+	return true
+}
+
+func validReq(ctx *macaron.Context, v interface{}) bool {
+	valid := validation.Validation{}
+	ok, _ := valid.Valid(&v)
+	if !ok {
+		detail := ""
+		for _, err := range valid.Errors {
+			detail += fmt.Sprintf("[key=%s, message=%s, value=%v]", err.Key, err.Message, err.Value)
+		}
+		ctx.JSON(http.StatusBadRequest, tkits.Error{
+			"invalid_request",
+			detail,
+		})
+		return false
+	}
+	return true
+}
+
+func validMember(ctx *macaron.Context, valid *validation.Validation) bool {
+	if valid.HasErrors() {
+		detail := ""
+		for _, err := range valid.Errors {
+			detail += fmt.Sprintf("[key=%s, message=%s, value=%v]", err.Key, err.Message, err.Value)
+		}
+		ctx.JSON(http.StatusBadRequest, tkits.Error{
+			"invalid_request",
+			detail,
+		})
+		return false
+	}
 	return true
 }

@@ -57,9 +57,8 @@ func (u *User) Read(fields ...string) error {
 	return err
 }
 
-func (u *User) Insert() error {
-	_, err := orm.NewOrm().Insert(u)
-	return err
+func (u *User) Insert() (int64, error) {
+	return orm.NewOrm().Insert(u)
 }
 
 func (u *User) Update(fields ...string) (int64, error) {
@@ -123,9 +122,8 @@ func (u *UserInfo) Read(fields ...string) error {
 	return err
 }
 
-func (u *UserInfo) Insert() error {
-	_, err := orm.NewOrm().Insert(u)
-	return err
+func (u *UserInfo) Insert() (int64, error)  {
+	return orm.NewOrm().Insert(u)
 }
 
 func (u *UserInfo) Update(fields ...string) (int64, error) {

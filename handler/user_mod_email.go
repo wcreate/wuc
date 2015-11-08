@@ -35,6 +35,10 @@ func ModifyEmail(ctx *macaron.Context) {
 		return
 	}
 
+	if !validReq(ctx, &memail) {
+		return
+	}
+
 	// 3.0
 	u.Email = memail.NewEmail
 	u.Cfmcode = tkits.StringNewRand(32)
@@ -44,10 +48,10 @@ func ModifyEmail(ctx *macaron.Context) {
 		return
 	}
 
-  if err := SendCfmEmail(u, CFM_MOD_SUBJET) ; err != nil {
-    ctx.JSON(http.StatusInternalServerError, api.SEND_EMAIL_FAILED)
-    return
-  }
+	if err := SendCfmEmail(u, CFM_MOD_SUBJET); err != nil {
+		ctx.JSON(http.StatusInternalServerError, api.SEND_EMAIL_FAILED)
+		return
+	}
 
 	rsp := &api.ModifyEmailRsp{
 		uid,

@@ -20,7 +20,7 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 		return
 	}
 
-	if !cpt.Verify(ulr.CaptchaId, ulr.CaptchaName) {
+	if !cpt.Verify(ulr.CaptchaId, ulr.CaptchaValue) {
 		ctx.JSON(http.StatusBadRequest, api.INVALID_CAPTCHA)
 		return
 	}
@@ -59,9 +59,12 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 		rsp.Username = u.Username
 		rsp.Token = token
 
-		ctx.SetCookie("token", token)
-		ctx.SetCookie("uid", suid)
-		
+		if ulr.CookieMaxAge == 0 {
+			ulr.CookieMaxAge = 60 * 60 * 12 //half of one day
+		}
+		ctx.SetCookie("token", token, ulr.CookieMaxAge)
+		ctx.SetCookie("uid", suid, ulr.CookieMaxAge)
+
 		ctx.JSON(http.StatusOK, rsp)
 	}
 }
