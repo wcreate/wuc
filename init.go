@@ -27,6 +27,7 @@ func InitHandles(m *macaron.Macaron) {
 	m.Put("/api/user/info/:uid", handler.ModifyUser)
 	m.Post("/api/user/info/:uid", handler.ModifyUser)
 	m.Put("/api/user/pwd/:uid", handler.ModifyPassword)
+	m.Put("/api/user/email/:uid", handler.ModifyEmail)
 
 	m.Post("/api/user/login", handler.LoginUser)
 	m.Post("/api/user/logout", handler.LogoutUser)

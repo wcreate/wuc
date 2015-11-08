@@ -49,7 +49,8 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	// generate a token
-	if token, err := tkits.GetSimpleToken().GenToken(cip, fmt.Sprintf("%v", u.Id)); err != nil {
+	suid := fmt.Sprintf("%v", u.Id)
+	if token, err := tkits.GetSimpleToken().GenToken(cip, suid); err != nil {
 		ctx.JSON(http.StatusInternalServerError, tkits.SYS_ERROR)
 		return
 	} else {
@@ -57,6 +58,10 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 		rsp.Uid = u.Id
 		rsp.Username = u.Username
 		rsp.Token = token
+
+		ctx.SetCookie("token", token)
+		ctx.SetCookie("uid", suid)
+		
 		ctx.JSON(http.StatusOK, rsp)
 	}
 }

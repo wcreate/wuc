@@ -13,6 +13,16 @@ var (
 		"invalid user or password.",
 	}
 
+	INVALID_EMAIL = tkits.Error{
+		"invalid request!",
+		"invalid email.",
+	}
+
+	SEND_EMAIL_FAILED = tkits.Error{
+		"sent email failed!",
+		"sent a comfirm email failed,please check whether the email is correct.",
+	}
+
 	INVALID_CAPTCHA = tkits.Error{
 		"invalid captcha!",
 		"invalid captcha.",
@@ -32,9 +42,22 @@ var (
 
 // Modify Password Request
 type ModifyPasswordReq struct {
-	Uid       string `json:"uid"`
+	Uid       int64  `json:"uid"`
 	OldPasswd string `json:"old_password"`
 	NewPasswd string `json:"new_password"`
+}
+
+// Modify Email Request
+type ModifyEmailReq struct {
+	Uid      int64  `json:"uid"`
+	OldEmail string `json:"old_email"`
+	NewEmail string `json:"new_email"`
+}
+
+// Modify Email Request
+type ModifyEmailRsp struct {
+	Uid    int64  `json:"uid"`
+	CfmUrl string `json:"cfm_url"`
 }
 
 //

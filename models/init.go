@@ -6,6 +6,6 @@ import (
 )
 
 func init() {
-	tkits.ConnectDB()
+	tkits.InitDB()
 	orm.RegisterModel(new(User), new(UserInfo))
 }
