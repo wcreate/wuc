@@ -18,6 +18,12 @@
     ```
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=UTF-8
+    
+    {
+      "id_name": "captcha_id",
+      "id_value": "RYZTF7NRKl35F4x",
+      "img_url": "/captcha/img/RYZTF7NRKl35F4x.png"
+    }
     ```
 
   - Add a user
@@ -37,5 +43,5 @@
   - User Logout
 
   - Check a user existed by username/email/mobile
-  
+
   - Confirm a user after register or modify email
