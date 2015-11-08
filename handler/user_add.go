@@ -51,6 +51,8 @@ func AddUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 	u.Salt = salt
 	u.Password = pwd
 	u.Updated = time.Now()
+	u.Username = uar.Username
+	u.Email = uar.Email
 	if id, err := u.Insert(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 		return
@@ -59,8 +61,8 @@ func AddUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	// generate a token
-	suid := fmt.Sprintf("%v", u.Id)
-	if token, err := tkits.GetSimpleToken().GenToken(ctx.RemoteAddr(), suid); err != nil {
+
+	if token, err := tkits.GetSimpleToken().GenToken(ctx.RemoteAddr(), u.Id, tkits.TOKEN_USER); err != nil {
 		ctx.JSON(http.StatusInternalServerError, tkits.SYS_ERROR)
 		return
 	} else {
@@ -68,6 +70,8 @@ func AddUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 		if uar.CookieMaxAge == 0 {
 			uar.CookieMaxAge = 60 * 60 * 12 //half of one day
 		}
+
+		suid := fmt.Sprintf("%v", u.Id)
 		ctx.SetCookie("token", token, uar.CookieMaxAge)
 		ctx.SetCookie("uid", suid, uar.CookieMaxAge)
 
