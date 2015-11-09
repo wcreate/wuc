@@ -13,7 +13,7 @@ import (
 )
 
 // POST /api/user/login
-func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
+func LoginUser(ctx *macaron.Context, as tkits.AuthService, cpt *captcha.Captcha) {
 	var ulr api.UserLoginReq
 	ok := getBody(ctx, &ulr)
 	if !ok {
@@ -39,7 +39,7 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	// update ip, time and count for login
-	cip := getClientIP(ctx)
+	cip := ctx.RemoteAddr()
 	u.LastLoginTime = time.Now()
 	u.LastLoginIp = cip
 	u.LoginCount += 1
@@ -50,7 +50,7 @@ func LoginUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 
 	// generate a token
 
-	if token, err := tkits.GetSimpleToken().GenToken(cip, u.Id, tkits.TOKEN_USER); err != nil {
+	if token, err := as.GenUserToken(cip, u.Id, 15, tkits.TokenUser); err != nil {
 		ctx.JSON(http.StatusInternalServerError, tkits.SYS_ERROR)
 		return
 	} else {

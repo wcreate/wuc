@@ -17,7 +17,7 @@ import (
 )
 
 // POST /api/user/signup
-func AddUser(ctx *macaron.Context, cpt *captcha.Captcha) {
+func AddUser(ctx *macaron.Context, as tkits.AuthService, cpt *captcha.Captcha) {
 	var uar api.UserAddReq
 	ok := getBody(ctx, &uar)
 	if !ok {
@@ -47,6 +47,13 @@ func AddUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 		return
 	}
 
+	// check reserve users
+	if _, ok := api.ReserveUsers[uar.Username]; ok {
+		ctx.JSON(http.StatusBadRequest, api.INVALID_SIGNUP)
+		return
+	}
+
+	// generate password mask
 	pwd, salt := tkits.GenPasswd(uar.Passwd, 8)
 	u.Salt = salt
 	u.Password = pwd
@@ -61,12 +68,13 @@ func AddUser(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	// generate a token
-
-	if token, err := tkits.GetSimpleToken().GenToken(ctx.RemoteAddr(), u.Id, tkits.TOKEN_USER); err != nil {
+	if token, err := as.GenUserToken(ctx.RemoteAddr(), u.Id, 15, tkits.TokenUser); err != nil {
 		ctx.JSON(http.StatusInternalServerError, tkits.SYS_ERROR)
 		return
 	} else {
 		rsp := &api.UserAddRsp{u.Id, u.Username, token}
+
+		// set some cookies
 		if uar.CookieMaxAge == 0 {
 			uar.CookieMaxAge = 60 * 60 * 12 //half of one day
 		}

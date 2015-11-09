@@ -12,10 +12,10 @@ import (
 )
 
 // PUT /api/user/email/:uid/
-func ModifyEmail(ctx *macaron.Context) {
+func ModifyEmail(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken) {
 	// 1.0
 	var memail api.ModifyEmailReq
-	uid, ok := getUidAndBodyWithAuth(ctx, &memail)
+	uid, ok := getUidAndBodyWithAuth(ctx, as, ut, tkits.DummyOptId, &memail)
 	if !ok {
 		return
 	}

@@ -9,9 +9,9 @@ import (
 )
 
 // DELETE /api/user/:uid/
-func DeleteUser(ctx *macaron.Context) {
+func DeleteUser(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken) {
 	// 1.0
-	uid, ok := getUidWithAuth(ctx)
+	uid, ok := getUidWithAuth(ctx, as, ut, tkits.DummyOptId)
 	if !ok {
 		return
 	}

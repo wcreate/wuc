@@ -9,12 +9,12 @@ import (
 )
 
 // Get /api/user/info/:uid/
-func UserInfo(ctx *macaron.Context) {
+func UserInfo(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken) {
 	// 1.0
-	uid, ok := getUidWithAuth(ctx)
+	uid, ok := getUidWithAuth(ctx, as, ut, tkits.DummyOptId)
 	if !ok {
 		return
-	} 
+	}
 
 	rsp := &api.UserInfoRsp{}
 	rsp.Id = uid

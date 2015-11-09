@@ -11,10 +11,10 @@ import (
 )
 
 // POST/PUT /api/user/info/:uid/
-func ModifyUser(ctx *macaron.Context) {
+func ModifyUser(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken) {
 	// 1.0
 	var mui api.ModifyUserInfoReq
-	uid, ok := getUidAndBodyWithAuth(ctx, &mui)
+	uid, ok := getUidAndBodyWithAuth(ctx, as, ut, tkits.DummyOptId, &mui)
 	if !ok {
 		return
 	}

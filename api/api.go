@@ -7,30 +7,31 @@ import (
 	"github.com/wcreate/wuc/models"
 )
 
+// Error code
 var (
 	INVALID_USER = tkits.Error{
-		"invalid_auth",
-		"invalid user or password.",
+		ErrorMsg: "invalid_auth",
+		Detail:   "invalid user or password.",
 	}
 
-	INVALID_EMAIL = tkits.Error{
-		"invalid_request",
-		"invalid email.",
+	INVALID_EMAIL = &tkits.Error{
+		ErrorMsg: "invalid_request",
+		Detail:   "invalid email.",
 	}
 
-	INVALID_SIGNUP = tkits.Error{
-		"invalid_user",
-		"email or user has existed.",
+	INVALID_SIGNUP = &tkits.Error{
+		ErrorMsg: "invalid_user",
+		Detail:   "email or user has existed.",
 	}
 
-	SEND_EMAIL_FAILED = tkits.Error{
-		"sent_email_failed",
-		"sent a comfirm email failed,please check whether the email is correct.",
+	SEND_EMAIL_FAILED = &tkits.Error{
+		ErrorMsg: "sent_email_failed",
+		Detail:   "sent a comfirm email failed,please check whether the email is correct.",
 	}
 
-	INVALID_CAPTCHA = tkits.Error{
-		"invalid_captcha",
-		"the captcha id or value is invalid.",
+	INVALID_CAPTCHA = &tkits.Error{
+		ErrorMsg: "invalid_captcha",
+		Detail:   "the captcha id or value is invalid.",
 	}
 )
 
@@ -40,10 +41,10 @@ var (
 	UsernamePrompt = "用户名是为永久性设定,不能少于4个字或多于30个字,请慎重考虑,不能为空!"
 	PasswdPrompt   = "密码含有非法字符或密码过短(至少4~30位密码)!"
 
-	ReserveUsers = map[string]string{
-		"admin":         "admin",
-		"administrator": "administrator",
-		"home":          "home",
+	ReserveUsers = map[string]int{
+		"admin":         1,
+		"administrator": 1,
+		"home":          1,
 	}
 )
 
@@ -67,7 +68,7 @@ type ModifyEmailRsp struct {
 	CfmUrl string `json:"cfm_url"`
 }
 
-//
+// Add/Signup a user Request
 type UserAddReq struct {
 	Email        string `json:"email" valid:"Email; MaxSize(100)"`
 	Username     string `json:"username" valid:"MaxSize(100)"`
@@ -77,6 +78,7 @@ type UserAddReq struct {
 	CookieMaxAge int    `json:"cookie_maxage"`
 }
 
+// Add/Signup a user Response
 type UserAddRsp struct {
 	Uid      int64  `json:"uid"`
 	Username string `json:"username"`
@@ -110,8 +112,14 @@ type UserInfoRsp struct {
 	models.User
 }
 
+// Retrive captch Response
 type CaptchaRsp struct {
 	FieldIdName string `json:"id_name"`
 	Id          string `json:"id_value"`
 	ImgUrl      string `json:"img_url"`
+}
+
+// Upload avator Response
+type UploadAvatorRsp struct {
+	ImgUrl string `json:"img_url"`
 }

@@ -3,11 +3,14 @@ package wuc
 import (
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/captcha"
+	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/handler"
 	"gopkg.in/macaron.v1"
 )
 
 func InitHandles(m *macaron.Macaron) {
+	m.Use(tkits.AuthMiddleWare())
+
 	initCaptch(m)
 	m.Get("/captcha/new", handler.GetCaptcha)
 

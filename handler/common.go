@@ -12,15 +12,7 @@ import (
 	"gopkg.in/macaron.v1"
 )
 
-func checkAuth(ctx *macaron.Context, uid int64) bool {
-	return tkits.CheckAuth(ctx, uid)
-}
-
-func getClientIP(ctx *macaron.Context) string {
-	return ctx.RemoteAddr()
-}
-
-func getUidWithAuth(ctx *macaron.Context) (int64, bool) {
+func getUidWithAuth(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken, opId tkits.OperationId) (int64, bool) {
 	uid := ctx.ParamsInt64("uid")
 	if uid == 0 {
 		ctx.JSON(http.StatusBadRequest, tkits.INVALID_URL)
@@ -28,14 +20,14 @@ func getUidWithAuth(ctx *macaron.Context) (int64, bool) {
 	}
 
 	// 1.0
-	if !checkAuth(ctx, uid) {
-		return -1, false
+	if !as.Authorize(ut, uid, opId) {
+		return uid, false
 	}
 	return uid, true
 }
 
-func getUidAndBodyWithAuth(ctx *macaron.Context, v interface{}) (int64, bool) {
-	uid, ok := getUidWithAuth(ctx)
+func getUidAndBodyWithAuth(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken, opId tkits.OperationId, v interface{}) (int64, bool) {
+	uid, ok := getUidWithAuth(ctx, as, ut, opId)
 	if !ok {
 		return uid, ok
 	}
@@ -75,8 +67,8 @@ func validReq(ctx *macaron.Context, v interface{}) bool {
 			detail += fmt.Sprintf("[key=%s, message=%s, value=%v]", err.Key, err.Message, err.Value)
 		}
 		ctx.JSON(http.StatusBadRequest, tkits.Error{
-			"invalid_request",
-			detail,
+			ErrorMsg: "invalid_request",
+			Detail:   detail,
 		})
 		return false
 	}
@@ -90,8 +82,8 @@ func validMember(ctx *macaron.Context, valid *validation.Validation) bool {
 			detail += fmt.Sprintf("[key=%s, message=%s, value=%v]", err.Key, err.Message, err.Value)
 		}
 		ctx.JSON(http.StatusBadRequest, tkits.Error{
-			"invalid_request",
-			detail,
+			ErrorMsg: "invalid_request",
+			Detail:   detail,
 		})
 		return false
 	}

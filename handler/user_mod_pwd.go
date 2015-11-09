@@ -13,10 +13,10 @@ import (
 )
 
 // PUT /api/user/pwd/:uid/
-func ModifyPassword(ctx *macaron.Context) {
+func ModifyPassword(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken) {
 	// 1.0
 	var mpwd api.ModifyPasswordReq
-	uid, ok := getUidAndBodyWithAuth(ctx, &mpwd)
+	uid, ok := getUidAndBodyWithAuth(ctx, as, ut, tkits.DummyOptId, &mpwd)
 	if !ok {
 		return
 	}
