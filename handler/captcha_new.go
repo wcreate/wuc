@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/captcha"
-	"github.com/wcreate/wuc/api"
+	"github.com/wcreate/wuc/rest"
 	"gopkg.in/macaron.v1"
 )
 
@@ -28,7 +28,7 @@ func GetCaptcha(ctx *macaron.Context, cpt *captcha.Captcha, cache cache.Cache) {
 		panic(fmt.Errorf("fail to create captcha: %v", err))
 	}
 
-	rsp := &api.CaptchaRsp{
+	rsp := &rest.CaptchaRsp{
 		cpt.FieldIdName,
 		v,
 		fmt.Sprintf("%s%s%s.png", cpt.SubURL, cpt.URLPrefix, v),

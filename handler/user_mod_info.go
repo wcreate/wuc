@@ -5,22 +5,22 @@ import (
 
 	"github.com/astaxie/beego/orm"
 	"github.com/wcreate/tkits"
-	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
+	"github.com/wcreate/wuc/rest"
 	"gopkg.in/macaron.v1"
 )
 
 // POST/PUT /api/user/info/:uid/
-func ModifyUser(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken) {
+func ModifyUser(ctx *macaron.Context, as rest.AuthService, ut *rest.UserToken) {
 	// 1.0
-	var mui api.ModifyUserInfoReq
-	uid, ok := getUidAndBodyWithAuth(ctx, as, ut, tkits.DummyOptId, &mui)
+	var mui rest.ModifyUserInfoReq
+	uid, ok := getUidAndBodyWithAuth(ctx, as, ut, rest.DummyOptId, &mui)
 	if !ok {
 		return
 	}
 
 	if uid != mui.Uid {
-		ctx.JSON(http.StatusBadRequest, api.INVALID_USER)
+		ctx.JSON(http.StatusBadRequest, rest.INVALID_USER)
 		return
 	}
 	mui.User = &models.User{Id: uid}

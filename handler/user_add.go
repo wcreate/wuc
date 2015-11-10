@@ -11,14 +11,14 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/go-macaron/captcha"
 	"github.com/wcreate/tkits"
-	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
+	"github.com/wcreate/wuc/rest"
 	"gopkg.in/macaron.v1"
 )
 
 // POST /api/user/signup
-func AddUser(ctx *macaron.Context, as tkits.AuthService, cpt *captcha.Captcha) {
-	var uar api.UserAddReq
+func AddUser(ctx *macaron.Context, as rest.AuthService, cpt *captcha.Captcha) {
+	var uar rest.UserAddReq
 	ok := getBody(ctx, &uar)
 	if !ok {
 		return
@@ -26,16 +26,16 @@ func AddUser(ctx *macaron.Context, as tkits.AuthService, cpt *captcha.Captcha) {
 
 	log.Debugf("retrive CaptchaId = %s, CaptchaValue= %s", uar.CaptchaId, uar.CaptchaValue)
 	if !cpt.Verify(uar.CaptchaId, uar.CaptchaValue) {
-		ctx.JSON(http.StatusBadRequest, api.INVALID_CAPTCHA)
+		ctx.JSON(http.StatusBadRequest, rest.INVALID_CAPTCHA)
 		return
 	}
 
 	valid := validation.Validation{}
 	valid.Email(uar.Email, "Email")
-	valid.Match(uar.Username, api.ValidPasswd,
-		"Username").Message(api.UsernamePrompt)
-	valid.Match(uar.Passwd, api.ValidPasswd,
-		"Passwd").Message(api.PasswdPrompt)
+	valid.Match(uar.Username, rest.ValidPasswd,
+		"Username").Message(rest.UsernamePrompt)
+	valid.Match(uar.Passwd, rest.ValidPasswd,
+		"Passwd").Message(rest.PasswdPrompt)
 	if !validMember(ctx, &valid) {
 		return
 	}
@@ -43,13 +43,13 @@ func AddUser(ctx *macaron.Context, as tkits.AuthService, cpt *captcha.Captcha) {
 	// check user whether existed
 	u := &models.User{}
 	if err := u.Find(uar.Email, uar.Username, ""); err != orm.ErrNoRows {
-		ctx.JSON(http.StatusBadRequest, api.INVALID_SIGNUP)
+		ctx.JSON(http.StatusBadRequest, rest.INVALID_SIGNUP)
 		return
 	}
 
 	// check reserve users
-	if _, ok := api.ReserveUsers[uar.Username]; ok {
-		ctx.JSON(http.StatusBadRequest, api.INVALID_SIGNUP)
+	if _, ok := rest.ReserveUsers[uar.Username]; ok {
+		ctx.JSON(http.StatusBadRequest, rest.INVALID_SIGNUP)
 		return
 	}
 
@@ -68,11 +68,11 @@ func AddUser(ctx *macaron.Context, as tkits.AuthService, cpt *captcha.Captcha) {
 	}
 
 	// generate a token
-	if token, err := as.GenUserToken(ctx.RemoteAddr(), u.Id, 15, tkits.TokenUser); err != nil {
+	if token, err := as.GenUserToken(ctx.RemoteAddr(), u.Id, 15, rest.TokenUser); err != nil {
 		ctx.JSON(http.StatusInternalServerError, tkits.SYS_ERROR)
 		return
 	} else {
-		rsp := &api.UserAddRsp{u.Id, u.Username, token}
+		rsp := &rest.UserAddRsp{u.Id, u.Username, token}
 
 		// set some cookies
 		if uar.CookieMaxAge == 0 {

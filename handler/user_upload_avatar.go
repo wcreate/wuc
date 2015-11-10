@@ -11,8 +11,8 @@ import (
 
 	"github.com/astaxie/beego/orm"
 	"github.com/wcreate/tkits"
-	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
+	"github.com/wcreate/wuc/rest"
 	"gopkg.in/macaron.v1"
 
 	log "github.com/Sirupsen/logrus"
@@ -23,9 +23,9 @@ var (
 )
 
 // POST /api/user/avatar/:uid
-func UploadAvatar(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken) {
+func UploadAvatar(ctx *macaron.Context, as rest.AuthService, ut *rest.UserToken) {
 	// retrive uid and check auth
-	uid, ok := getUidWithAuth(ctx, as, ut, tkits.DummyOptId)
+	uid, ok := getUidWithAuth(ctx, as, ut, rest.DummyOptId)
 	if !ok {
 		return
 	}
@@ -33,7 +33,7 @@ func UploadAvatar(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToke
 	// 2.0
 	ui := &models.UserInfo{User: &models.User{Id: uid}}
 	if err := ui.Read("User"); err == orm.ErrNoRows {
-		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
+		ctx.JSON(http.StatusNotFound, rest.INVALID_USER)
 		return
 	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
@@ -68,7 +68,7 @@ func UploadAvatar(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToke
 		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
 		return
 	}
-	rsp := &api.UploadAvatorRsp{ImgUrl: ui.Avatar}
+	rsp := &rest.UploadAvatorRsp{ImgUrl: ui.Avatar}
 	ctx.JSON(http.StatusOK, rsp)
 }
 

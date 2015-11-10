@@ -3,13 +3,13 @@ package wuc
 import (
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/captcha"
-	"github.com/wcreate/tkits"
 	"github.com/wcreate/wuc/handler"
+	"github.com/wcreate/wuc/rest"
 	"gopkg.in/macaron.v1"
 )
 
 func InitHandles(m *macaron.Macaron) {
-	m.Use(tkits.AuthMiddleWare())
+	m.Use(rest.AuthMiddleWare())
 
 	initCaptch(m)
 	m.Get("/captcha/new", handler.GetCaptcha)
@@ -27,7 +27,9 @@ func InitHandles(m *macaron.Macaron) {
 	m.Post("/api/user/logout", handler.LogoutUser)
 
 	m.Get("/api/user/check", handler.CheckUser)
-	m.Get("/api/user/cfm", handler.ConfirmUser)
+	m.Get("/user/cfm", handler.ConfirmUser) // note: not need start with /api
+
+	m.Post("/api/user/avatar/:uid", handler.UploadAvatar)
 }
 
 func initCaptch(m *macaron.Macaron) {

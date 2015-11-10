@@ -7,16 +7,16 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
 	"github.com/wcreate/tkits"
-	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
+	"github.com/wcreate/wuc/rest"
 	"gopkg.in/macaron.v1"
 )
 
 // PUT /api/user/pwd/:uid/
-func ModifyPassword(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken) {
+func ModifyPassword(ctx *macaron.Context, as rest.AuthService, ut *rest.UserToken) {
 	// 1.0
-	var mpwd api.ModifyPasswordReq
-	uid, ok := getUidAndBodyWithAuth(ctx, as, ut, tkits.DummyOptId, &mpwd)
+	var mpwd rest.ModifyPasswordReq
+	uid, ok := getUidAndBodyWithAuth(ctx, as, ut, rest.DummyOptId, &mpwd)
 	if !ok {
 		return
 	}
@@ -24,7 +24,7 @@ func ModifyPassword(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserTo
 	// 2.0
 	u := &models.User{Id: uid}
 	if err := u.ReadOneOnly("Salt", "Password"); err == orm.ErrNoRows {
-		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
+		ctx.JSON(http.StatusNotFound, rest.INVALID_USER)
 		return
 	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
@@ -32,13 +32,13 @@ func ModifyPassword(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserTo
 	}
 
 	if !tkits.CmpPasswd(mpwd.OldPasswd, u.Salt, u.Password) {
-		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
+		ctx.JSON(http.StatusNotFound, rest.INVALID_USER)
 		return
 	}
 
 	valid := validation.Validation{}
-	valid.Match(mpwd.NewPasswd, api.ValidPasswd,
-		"NewPasswd").Message(api.PasswdPrompt)
+	valid.Match(mpwd.NewPasswd, rest.ValidPasswd,
+		"NewPasswd").Message(rest.PasswdPrompt)
 	if !validMember(ctx, &valid) {
 		return
 	}

@@ -8,11 +8,12 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/astaxie/beego/validation"
 	"github.com/wcreate/tkits"
+	"github.com/wcreate/wuc/rest"
 
 	"gopkg.in/macaron.v1"
 )
 
-func getUidWithAuth(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken, opId tkits.OperationId) (int64, bool) {
+func getUidWithAuth(ctx *macaron.Context, as rest.AuthService, ut *rest.UserToken, opId rest.OperationId) (int64, bool) {
 	uid := ctx.ParamsInt64("uid")
 	if uid == 0 {
 		ctx.JSON(http.StatusBadRequest, tkits.INVALID_URL)
@@ -26,7 +27,7 @@ func getUidWithAuth(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserTo
 	return uid, true
 }
 
-func getUidAndBodyWithAuth(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken, opId tkits.OperationId, v interface{}) (int64, bool) {
+func getUidAndBodyWithAuth(ctx *macaron.Context, as rest.AuthService, ut *rest.UserToken, opId rest.OperationId, v interface{}) (int64, bool) {
 	uid, ok := getUidWithAuth(ctx, as, ut, opId)
 	if !ok {
 		return uid, ok

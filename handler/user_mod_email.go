@@ -6,16 +6,16 @@ import (
 
 	"github.com/astaxie/beego/orm"
 	"github.com/wcreate/tkits"
-	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
+	"github.com/wcreate/wuc/rest"
 	"gopkg.in/macaron.v1"
 )
 
 // PUT /api/user/email/:uid/
-func ModifyEmail(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken) {
+func ModifyEmail(ctx *macaron.Context, as rest.AuthService, ut *rest.UserToken) {
 	// 1.0
-	var memail api.ModifyEmailReq
-	uid, ok := getUidAndBodyWithAuth(ctx, as, ut, tkits.DummyOptId, &memail)
+	var memail rest.ModifyEmailReq
+	uid, ok := getUidAndBodyWithAuth(ctx, as, ut, rest.DummyOptId, &memail)
 	if !ok {
 		return
 	}
@@ -23,7 +23,7 @@ func ModifyEmail(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken
 	// 2.0
 	u := &models.User{Id: uid}
 	if err := u.ReadOneOnly("Email"); err == orm.ErrNoRows {
-		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
+		ctx.JSON(http.StatusNotFound, rest.INVALID_USER)
 		return
 	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, tkits.DB_ERROR)
@@ -31,7 +31,7 @@ func ModifyEmail(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken
 	}
 
 	if memail.OldEmail != u.Email {
-		ctx.JSON(http.StatusBadRequest, api.INVALID_EMAIL)
+		ctx.JSON(http.StatusBadRequest, rest.INVALID_EMAIL)
 		return
 	}
 
@@ -49,11 +49,11 @@ func ModifyEmail(ctx *macaron.Context, as tkits.AuthService, ut *tkits.UserToken
 	}
 
 	if err := SendCfmEmail(u, CFM_MOD_SUBJET); err != nil {
-		ctx.JSON(http.StatusInternalServerError, api.SEND_EMAIL_FAILED)
+		ctx.JSON(http.StatusInternalServerError, rest.SEND_EMAIL_FAILED)
 		return
 	}
 
-	rsp := &api.ModifyEmailRsp{
+	rsp := &rest.ModifyEmailRsp{
 		uid,
 		fmt.Sprintf("http://%s//api/user/cfm?t=mail&amp;uid=%v&amp;code=%s", tkits.WebDomain, uid, u.Cfmcode),
 	}

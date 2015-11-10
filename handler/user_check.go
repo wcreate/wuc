@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/astaxie/beego/orm"
-	"github.com/wcreate/wuc/api"
 	"github.com/wcreate/wuc/models"
+	"github.com/wcreate/wuc/rest"
 	"gopkg.in/macaron.v1"
 )
 
@@ -27,7 +27,7 @@ func CheckUser(ctx *macaron.Context) {
 		break
 	}
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, api.INVALID_USER)
+		ctx.JSON(http.StatusNotFound, rest.INVALID_USER)
 		return
 	}
 	ctx.Status(http.StatusOK)

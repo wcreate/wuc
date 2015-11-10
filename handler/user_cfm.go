@@ -25,9 +25,9 @@ var (
             {{.intro}}
         </div>
         <div style="padding: 30px 40px 40px;">%s 您好，您注册或修改了登录邮箱地址<br><br>请在 1 小时内点击此链接以完成修改
-            <a style="color: #009A61; text-decoration: none;" href="http://{{.domain}}//api/user/cfm?t=mail&amp;uid={{.uid}}&amp;code={{.code}}">
-              http://{{.domain}}//api/user/cfm?t=mail&amp;uid={{.uid}}&amp;code={{.code}}</a><br></div><div style="background: #EEE; border-top: 1px solid #DDD; text-align: center; height: 90px; line-height: 90px;">
-            <a href="http://{{.domain}}//api/user/cfm?t=mail&amp;uid={{.uid}}&amp;code={{.code}}" style="padding: 8px 18px; background: #009A61; color: #FFF; text-decoration: none; border-radius: 3px;">完成确认 ➔</a>
+            <a style="color: #009A61; text-decoration: none;" href="http://{{.domain}}/user/cfm?t=mail&amp;uid={{.uid}}&amp;code={{.code}}">
+              http://{{.domain}}/user/cfm?t=mail&amp;uid={{.uid}}&amp;code={{.code}}</a><br></div><div style="background: #EEE; border-top: 1px solid #DDD; text-align: center; height: 90px; line-height: 90px;">
+            <a href="http://{{.domain}}/user/cfm?t=mail&amp;uid={{.uid}}&amp;code={{.code}}" style="padding: 8px 18px; background: #009A61; color: #FFF; text-decoration: none; border-radius: 3px;">完成确认 ➔</a>
         </div>
     </div></body></html>`
 )
